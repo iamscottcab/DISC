@@ -1,4 +1,6 @@
-﻿namespace DISC
+﻿using System;
+
+namespace DISC
 {
     public interface IRootDIScope : IDIScope
     {
@@ -25,14 +27,26 @@
         /// <summary>
         /// Registers a service with a Singleton lifetime.
         /// </summary>
-        /// <exception cref="System.ArgumentException">Thrown if the implementation is abstract.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract.</exception>
         void RegisterSingleton<TService>() where TService : class;
+
+        /// <summary>
+        /// Registers a service with a Singleton lifetime using the provided factory.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract.</exception>
+        void RegisterSingleton<TService>(Func<TService> factory) where TService : class;
 
         /// <summary>
         /// Registers a service with a Singleton lifetime.
         /// </summary>
-        /// <exception cref="System.ArgumentException">Thrown if the implementation is abstract.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract.</exception>
         void RegisterSingleton<TService, TImplementation>() where TImplementation : class, TService;
+
+        /// <summary>
+        /// Registers a service with a Singleton lifetime using the provided factory.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract.</exception>
+        void RegisterSingleton<TService, TImplementation>(Func<TImplementation> factory) where TImplementation : class, TService;
 
         #endregion
 
@@ -41,14 +55,26 @@
         /// <summary>
         /// Registers a service with a Transient lifetime.
         /// </summary>
-        /// <exception cref="System.ArgumentException">Thrown if the implementation is abstract.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract.</exception>
         void RegisterTransient<TService>() where TService : class;
+
+        /// <summary>
+        /// Registers a service with a Transient lifetime using the provided factory.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract.</exception>
+        void RegisterTransient<TService>(Func<TService> factory) where TService : class;
 
         /// <summary>
         /// Registers a service with a Transient lifetime.
         /// </summary>
-        /// <exception cref="System.ArgumentException">Thrown if the implementation is abstract.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract.</exception>
         void RegisterTransient<TService, TImplementation>() where TImplementation : class, TService;
+
+        /// <summary>
+        /// Registers a service with a Transient lifetime using the provided factory.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract.</exception>
+        void RegisterTransient<TService, TImplementation>(Func<TImplementation> factory) where TImplementation : class, TService;
 
         #endregion
     }

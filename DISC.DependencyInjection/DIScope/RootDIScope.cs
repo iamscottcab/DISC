@@ -10,7 +10,7 @@ namespace DISC
 
         public RootDIScope()
         {
-            RegisterSingleton<IScopeProvider, RootDIScope>();
+            RegisterSingleton<IScopeProvider, RootDIScope>(() => this);
         }
 
         protected override void CheckInitialization()
@@ -52,12 +52,22 @@ namespace DISC
 
         public void RegisterSingleton<TService>() where TService : class
         {
-            RegisterSingleton<TService, TService>();
+            RegisterSingleton<TService, TService>(null);
+        }
+
+        public void RegisterSingleton<TService>(Func<TService> factory) where TService : class
+        {
+            RegisterSingleton<TService, TService>(factory);
         }
 
         public void RegisterSingleton<TService, TImplementation>() where TImplementation : class, TService
         {
-            AddToServices(typeof(TService), typeof(TImplementation), null, ServiceLifetime.Singleton);
+            RegisterSingleton<TService, TImplementation>(null);
+        }
+
+        public void RegisterSingleton<TService, TImplementation>(Func<TImplementation> factory) where TImplementation : class, TService
+        {
+            AddToServices(typeof(TService), typeof(TImplementation), factory, ServiceLifetime.Singleton);
         }
 
         #endregion
@@ -66,12 +76,22 @@ namespace DISC
 
         public void RegisterTransient<TService>() where TService : class
         {
-            RegisterTransient<TService, TService>();
+            RegisterTransient<TService, TService>(null);
+        }
+
+        public void RegisterTransient<TService>(Func<TService> factory) where TService : class
+        {
+            RegisterTransient<TService, TService>(factory);
         }
 
         public void RegisterTransient<TService, TImplementation>() where TImplementation : class, TService
         {
-            AddToServices(typeof(TService), typeof(TImplementation), null, ServiceLifetime.Transient);
+            RegisterTransient<TService, TImplementation>(null);
+        }
+
+        public void RegisterTransient<TService, TImplementation>(Func<TImplementation> factory) where TImplementation : class, TService
+        {
+            AddToServices(typeof(TService), typeof(TImplementation), factory, ServiceLifetime.Transient);
         }
 
         #endregion

@@ -9,7 +9,7 @@ namespace DISC
         /// </summary>
         /// <returns><see cref="IRootDIScope"/> instance for registering services against.</returns>
         /// <exception cref="NotSupportedException">Thrown when Root Scope already exists.</exception>
-        public static IRootDIScope CreateMainScope()
+        public static IRootDIScope CreateRootScope()
         {
             if (DIScope.RootScope != null)
             {

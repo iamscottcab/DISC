@@ -10,7 +10,7 @@ namespace DISC.Tests.RegisterTests
         [SetUp]
         public void BeforeEach()
         {
-            container = DI.CreateMainScope();
+            container = DI.CreateRootScope();
         }
 
         [TearDown]
@@ -63,6 +63,14 @@ namespace DISC.Tests.RegisterTests
             }
         }
 
+        [Test]
+        public void Overriding_Registered_Lifetime_Should_Not_Throw()
+        {
+            container.RegisterTransient<BasicClass>();
+            container.RegisterSingleton<BasicClass>();
+            Assert.That(true);
+        }
+
         #endregion
 
         #region Singletons
@@ -110,6 +118,57 @@ namespace DISC.Tests.RegisterTests
         {
             container.RegisterSingleton<ISomeInterface, SomeClassWithInterface>();
             container.RegisterSingleton<ISomeInterface, SomeOtherClassWithInterface>();
+
+            Assert.That(true);
+        }
+
+        #endregion
+
+        #region Transients
+
+        [Test]
+        public void Registering_Abstract_Transient_Class_Should_Throw()
+        {
+            try
+            {
+                container.RegisterTransient<BasicAbstractClass>();
+            }
+            catch (ArgumentException)
+            {
+                Assert.That(true);
+            }
+        }
+
+        [Test]
+        public void Registering_Transient_Class_Should_Not_Throw()
+        {
+            container.RegisterTransient<BasicClass>();
+
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Registering_Same_Transient_Class_Multiple_Times_Should_Not_Throw()
+        {
+            container.RegisterTransient<BasicClass>();
+            container.RegisterTransient<BasicClass>();
+
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Registering_Transient_Interface_Should_Not_Throw()
+        {
+            container.RegisterTransient<ISomeInterface, SomeClassWithInterface>();
+
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Registering_Same_Transient_Interface_Multiple_Times_Should_Not_Throw()
+        {
+            container.RegisterTransient<ISomeInterface, SomeClassWithInterface>();
+            container.RegisterTransient<ISomeInterface, SomeOtherClassWithInterface>();
 
             Assert.That(true);
         }
