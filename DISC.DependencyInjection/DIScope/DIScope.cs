@@ -105,7 +105,7 @@ namespace DISC
             // e.g. IThing<> might now be an IThing<A>
             var implementationType = genericDescriptor.ImplementationType.MakeGenericType(serviceType.GetGenericArguments());
 
-            // Try and fetch this implementation from the root also...
+            // Try and fetch the implementation from the root also...
             ServiceDescriptor rootDescriptor = null;
 
             if (RootScope != this)
@@ -113,14 +113,13 @@ namespace DISC
                 rootDescriptor = RootScope.GetServiceDescriptor(serviceType);
             }
 
-            // If we got a match check if the implementation types match (perhaps another scope created this open generic in the meantime)
-            // Then and add accordingly
+            // If we got a match check if the implementation types match (perhaps another scope created this concrete generic in the meantime)
             if (rootDescriptor != null && rootDescriptor.ImplementationType == implementationType)
             {
                 AddToServices(serviceType, rootDescriptor.ImplementationType, rootDescriptor.ImplementationFactory, rootDescriptor.Lifetime);
             }
             // If we didn't get a match on type then add this to both the local scope (and the root if we are not the root)
-            // so that other scopes can resolve the concrete generic the same way
+            // so that other scopes can resolve the concrete generic the same way.
             else
             {
                 AddToServices(serviceType, implementationType, genericDescriptor.ImplementationFactory, genericDescriptor.Lifetime);

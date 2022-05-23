@@ -19,6 +19,41 @@ namespace DISC.Tests
             DI.ClearMainScope();
         }
 
+        [Test]
+        public void Getting_Class_With_No_Constructors_Should_Not_Throw()
+        {
+            container.RegisterSingleton<BasicClass>();
+            container.GetService<BasicClass>();
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Getting_Class_With_One_Constructor_Should_Not_Throw()
+        {
+            container.RegisterSingleton<ClassWithConstructor>();
+            container.GetService<ClassWithConstructor>();
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Getting_Class_With_Multiple_Constructors_Should_Throw()
+        {
+            container.RegisterSingleton<ClassWithMultipleConstructors>();
+            try
+            {
+                container.GetService<ClassWithMultipleConstructors>();
+                Assert.That(false);
+            }
+            catch (InvalidOperationException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
         #region Singletons
 
         [Test]
@@ -27,10 +62,15 @@ namespace DISC.Tests
             try
             {
                 container.GetService<BasicClass>();
+                Assert.That(false);
             }
             catch (NullReferenceException)
             {
                 Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
             }
         }
 
@@ -78,10 +118,16 @@ namespace DISC.Tests
             try
             {
                 container.GetService<ISomeInterface>();
+                Assert.That(false);
             }
             catch (NullReferenceException)
             {
                 Assert.That(true);
+
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
             }
         }
 
@@ -123,6 +169,34 @@ namespace DISC.Tests
             Assert.AreEqual(singletonOne, singletonTwo);
         }
 
+        [Test]
+        public void Getting_Singleton_By_Class_With_Factory_Should_Return_Correct_Object()
+        {
+            var obj = new ClassWithStringProperty();
+            obj.Value = "Some test value";
+
+            container.RegisterSingleton<ClassWithStringProperty>(() => obj);
+
+            var singleton = container.GetService<ClassWithStringProperty>();
+            
+            Assert.NotNull(singleton.Value);
+            Assert.AreEqual(obj, singleton);
+        }
+
+        [Test]
+        public void Getting_Singleton_By_Interface_With_Factory_Should_Return_Correct_Object()
+        {
+            var obj = new ClassWithStringProperty();
+            obj.Value = "Some test value";
+
+            container.RegisterSingleton<IClassWithStringProperty, ClassWithStringProperty>(() => obj);
+
+            var singleton = container.GetService<IClassWithStringProperty>();
+
+            Assert.NotNull(singleton.Value);
+            Assert.AreEqual(obj, singleton);
+        }
+
         #endregion
 
         #region Transients
@@ -133,10 +207,15 @@ namespace DISC.Tests
             try
             {
                 container.GetService<BasicClass>();
+                Assert.That(false);
             }
             catch (NullReferenceException)
             {
                 Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
             }
         }
 
@@ -184,10 +263,15 @@ namespace DISC.Tests
             try
             {
                 container.GetService<ISomeInterface>();
+                Assert.That(false);
             }
             catch (NullReferenceException)
             {
                 Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
             }
         }
 
@@ -227,6 +311,22 @@ namespace DISC.Tests
             var TransientTwo = newScope.GetService<ISomeInterface>();
 
             Assert.AreNotEqual(TransientOne, TransientTwo);
+        }
+
+        [Test]
+        public void Getting_Transient_By_Class_With_Factory_Should_Return_Correct_Object()
+        {
+            container.RegisterTransient<BasicClass>(() => new DerivedClass());
+            var transient = container.GetService<BasicClass>();
+            Assert.That(transient.GetType() == typeof(DerivedClass));
+        }
+
+        [Test]
+        public void Getting_Transient_By_Interface_With_Factory_Should_Return_Correct_Object()
+        {
+            container.RegisterTransient<ISomeInterface, SomeClassWithInterface>(() => new SomeDerivedClassWithInterface());
+            var transient = container.GetService<ISomeInterface>();
+            Assert.That(transient.GetType() == typeof(SomeDerivedClassWithInterface));
         }
 
         #endregion

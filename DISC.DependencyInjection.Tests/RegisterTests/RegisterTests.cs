@@ -28,10 +28,15 @@ namespace DISC.Tests.RegisterTests
             try
             {
                 container.RegisterEntryPoint<BasicClass>();
+                Assert.That(false);
             }
             catch (NotSupportedException)
             {
                 Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
             }
         }
 
@@ -41,10 +46,15 @@ namespace DISC.Tests.RegisterTests
             try
             {
                 container.ResolveEntryPoint<BasicClass>();
+                Assert.That(false);
             }
             catch (NullReferenceException)
             {
                 Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
             }
         }
 
@@ -56,10 +66,15 @@ namespace DISC.Tests.RegisterTests
             try
             {
                 container.ResolveEntryPoint<SomeOtherBasicClass>();
+                Assert.That(false);
             }
             catch (ArgumentException)
             {
                 Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
             }
         }
 
@@ -81,10 +96,15 @@ namespace DISC.Tests.RegisterTests
             try
             {
                 container.RegisterSingleton<BasicAbstractClass>();
+                Assert.That(false);
             }
             catch (ArgumentException)
             {
                 Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
             }
         }
 
@@ -132,10 +152,15 @@ namespace DISC.Tests.RegisterTests
             try
             {
                 container.RegisterTransient<BasicAbstractClass>();
+                Assert.That(false);
             }
             catch (ArgumentException)
             {
                 Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
             }
         }
 
