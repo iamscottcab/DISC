@@ -16,7 +16,7 @@ namespace DISC.Tests.RegisterTests
         [TearDown]
         public void AfterEach()
         {
-            DI.ClearMainScope();
+            DI.ClearRootScope();
         }
 
         #region Bootstrapping
@@ -194,6 +194,62 @@ namespace DISC.Tests.RegisterTests
         {
             container.RegisterTransient<ISomeInterface, SomeClassWithInterface>();
             container.RegisterTransient<ISomeInterface, SomeOtherClassWithInterface>();
+
+            Assert.That(true);
+        }
+
+        #endregion
+
+        #region Scoped
+
+        [Test]
+        public void Registering_Abstract_Scoped_Class_Should_Throw()
+        {
+            try
+            {
+                container.RegisterScoped<BasicAbstractClass>();
+                Assert.That(false);
+            }
+            catch (ArgumentException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
+        [Test]
+        public void Registering_Scoped_Class_Should_Not_Throw()
+        {
+            container.RegisterScoped<BasicClass>();
+
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Registering_Same_Scoped_Class_Multiple_Times_Should_Not_Throw()
+        {
+            container.RegisterScoped<BasicClass>();
+            container.RegisterScoped<BasicClass>();
+
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Registering_Scoped_Interface_Should_Not_Throw()
+        {
+            container.RegisterScoped<ISomeInterface, SomeClassWithInterface>();
+
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Registering_Same_Scoped_Interface_Multiple_Times_Should_Not_Throw()
+        {
+            container.RegisterScoped<ISomeInterface, SomeClassWithInterface>();
+            container.RegisterScoped<ISomeInterface, SomeOtherClassWithInterface>();
 
             Assert.That(true);
         }

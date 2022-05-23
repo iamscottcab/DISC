@@ -8,8 +8,14 @@ namespace DISC
     {
         internal static Type entryPointType = null;
 
-        public RootDIScope()
+        public DISettings Settings { get; private set; }
+
+
+        public RootDIScope(DISettings settings)
         {
+            settings ??= new();
+            Settings = settings;
+
             RegisterSingleton<IScopeProvider, RootDIScope>(() => this);
         }
 

@@ -46,4 +46,18 @@
             Item = item;
         }
     }
+
+    public interface IInterfaceWithDependency
+   {
+        BasicClass Class { get; }
+    }
+
+    public class ClassWithDependency : IInterfaceWithDependency
+    {
+        public BasicClass Class { get; }
+        public ClassWithDependency(BasicClass basicClass)
+        {
+            Class = basicClass;
+        }
+    }
 }

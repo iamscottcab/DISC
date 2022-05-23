@@ -31,10 +31,15 @@ namespace DISC
 
         public T GetService<T>()
         {
-            return (T)GetService(typeof(T));
+            return (T)GetService(typeof(T), null);
         }
 
         public object GetService(Type serviceType)
+        {
+            return GetService(serviceType, null);
+        }
+
+        private object GetService(Type serviceType, ServiceLifetime? parentLifetime)
         {
             if (serviceType == null)
             {
@@ -48,9 +53,14 @@ namespace DISC
                 throw new NullReferenceException($"A service of type {serviceType.Name} was not registered.");
             }
 
+            if (RootScope.Settings.ValidateServiceLifetime && parentLifetime.HasValue && parentLifetime.Value > descriptor.Lifetime)
+            {
+                throw new NotSupportedException($"You are creating a captive dependency on type {serviceType.Name}, this is not supoorted by default.");
+            }
+
             if (descriptor.Lifetime == ServiceLifetime.Singleton && RootScope != this)
             {
-                return RootScope.GetService(serviceType);
+                return RootScope.GetService(serviceType, descriptor.Lifetime);
             }
 
             var implementation = descriptor.Implementation;
@@ -63,19 +73,28 @@ namespace DISC
 
                     if (!serviceType.IsAssignableFrom(implementation.GetType()))
                     {
-                        throw new InvalidCastException($"Type {serviceType} is not assignable from {implementation.GetType().Name}");
+                        throw new InvalidCastException($"Type {serviceType.Name} is not assignable from {descriptor.ImplementationType.Name}");
                     }
                 }
                 else
                 {
                     var implementationType = descriptor.ImplementationType;
 
-                    var constructorArgs = GetConstructorInjections(implementationType);
+                    var constructorArgs = GetConstructorInjections(implementationType, descriptor.Lifetime);
                     implementation = Activator.CreateInstance(implementationType, constructorArgs);
                 }
 
-                if (descriptor.Lifetime == ServiceLifetime.Singleton || descriptor.Lifetime == ServiceLifetime.Scoped)
+                if (descriptor.Lifetime == ServiceLifetime.Singleton)
                 {
+                    descriptor.Implementation = implementation;
+                } 
+                else if (descriptor.Lifetime == ServiceLifetime.Scoped)
+                {
+                    if (RootScope == this && !RootScope.Settings.AllowScopedInRoot)
+                    {
+                        throw new NotSupportedException($"You are unable to inject a Scoped lifetime for {descriptor.ImplementationType.Name} in the root as they effectively become Singletons. This can be overridden in Settings.");
+                    }
+
                     descriptor.Implementation = implementation;
                 }
             }
@@ -135,7 +154,7 @@ namespace DISC
             }
         }
 
-        private object[] GetConstructorInjections(Type serviceType)
+        private object[] GetConstructorInjections(Type serviceType, ServiceLifetime parentLifetime)
         {
             ConstructorInfo constructorInfo = null;
 
@@ -148,8 +167,8 @@ namespace DISC
                 throw new InvalidOperationException($"Service of type {serviceType.Name} has an ambiguous amount of constructors, it should have exactly 0 or 1.", ex);
             }
 
-            var parameters = constructorInfo?.GetParameters() ?? new System.Reflection.ParameterInfo[0];
-            return parameters.Select(p => GetService(p.ParameterType)).ToArray();
+            var parameters = constructorInfo?.GetParameters() ?? new ParameterInfo[0];
+            return parameters.Select(p => GetService(p.ParameterType, parentLifetime)).ToArray();
         }
 
         protected void AddToServices(Type serviceType, Type implementationType, Func<object> implementationFactory, ServiceLifetime lifetime)
