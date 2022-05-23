@@ -74,7 +74,7 @@ namespace DISC
                     implementation = Activator.CreateInstance(implementationType, constructorArgs);
                 }
 
-                if (descriptor.Lifetime == ServiceLifetime.Singleton)
+                if (descriptor.Lifetime == ServiceLifetime.Singleton || descriptor.Lifetime == ServiceLifetime.Scoped)
                 {
                     descriptor.Implementation = implementation;
                 }

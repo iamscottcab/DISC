@@ -331,6 +331,138 @@ namespace DISC.Tests
 
         #endregion
 
+        #region Scoped
+
+        [Test]
+        public void Getting_Scoped_Class_Not_Registered_Should_Throw()
+        {
+            try
+            {
+                container.GetService<BasicClass>();
+                Assert.That(false);
+            }
+            catch (NullReferenceException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
+        [Test]
+        public void Getting_Scoped_Class_Registered_Should_Not_Throw()
+        {
+            container.RegisterScoped<BasicClass>();
+            container.GetService<BasicClass>();
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Getting_Multiple_Scoped_Of_Same_Class_Should_Not_Throw()
+        {
+            container.RegisterScoped<BasicClass>();
+            container.GetService<BasicClass>();
+            container.GetService<BasicClass>();
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Getting_Multiple_Scoped_Of_Same_Class_Resolve_Same_Object()
+        {
+            container.RegisterScoped<BasicClass>();
+            var ScopedOne = container.GetService<BasicClass>();
+            var ScopedTwo = container.GetService<BasicClass>();
+            Assert.AreEqual(ScopedOne, ScopedTwo);
+        }
+
+        [Test]
+        public void Getting_Multiple_Scoped_Of_Same_Class_Across_Scopes_Resolve_Different_Object()
+        {
+            container.RegisterScoped<BasicClass>();
+            var ScopedOne = container.GetService<BasicClass>();
+
+            var newScope = container.GetService<IScopeProvider>().CreateScope();
+            var ScopedTwo = newScope.GetService<BasicClass>();
+
+            Assert.AreNotEqual(ScopedOne, ScopedTwo);
+        }
+
+        [Test]
+        public void Getting_Scoped_Interface_Not_Registered_Should_Throw()
+        {
+            try
+            {
+                container.GetService<ISomeInterface>();
+                Assert.That(false);
+            }
+            catch (NullReferenceException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
+        [Test]
+        public void Getting_Scoped_Interface_Registered_Should_Not_Throw()
+        {
+            container.RegisterScoped<ISomeInterface, SomeClassWithInterface>();
+            container.GetService<ISomeInterface>();
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Getting_Multiple_Scoped_Of_Same_Interface_Should_Not_Throw()
+        {
+            container.RegisterScoped<ISomeInterface, SomeClassWithInterface>();
+            container.GetService<ISomeInterface>();
+            container.GetService<ISomeInterface>();
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Getting_Multiple_Scoped_Of_Same_Interface_Resolve_Same_Object()
+        {
+            container.RegisterScoped<ISomeInterface, SomeClassWithInterface>();
+            var ScopedOne = container.GetService<ISomeInterface>();
+            var ScopedTwo = container.GetService<ISomeInterface>();
+            Assert.AreEqual(ScopedOne, ScopedTwo);
+        }
+
+        [Test]
+        public void Getting_Multiple_Scoped_Of_Same_Interface_Across_Scopes_Resolve_Different_Object()
+        {
+            container.RegisterScoped<ISomeInterface, SomeClassWithInterface>();
+            var ScopedOne = container.GetService<ISomeInterface>();
+
+            var newScope = container.GetService<IScopeProvider>().CreateScope();
+            var ScopedTwo = newScope.GetService<ISomeInterface>();
+
+            Assert.AreNotEqual(ScopedOne, ScopedTwo);
+        }
+
+        [Test]
+        public void Getting_Scoped_By_Class_With_Factory_Should_Return_Correct_Object()
+        {
+            container.RegisterScoped<BasicClass>(() => new DerivedClass());
+            var Scoped = container.GetService<BasicClass>();
+            Assert.That(Scoped.GetType() == typeof(DerivedClass));
+        }
+
+        [Test]
+        public void Getting_Scoped_By_Interface_With_Factory_Should_Return_Correct_Object()
+        {
+            container.RegisterScoped<ISomeInterface, SomeClassWithInterface>(() => new SomeDerivedClassWithInterface());
+            var Scoped = container.GetService<ISomeInterface>();
+            Assert.That(Scoped.GetType() == typeof(SomeDerivedClassWithInterface));
+        }
+
+        #endregion
+
         #region Getting via Types
 
         [Test]
@@ -402,6 +534,36 @@ namespace DISC.Tests
                 Assert.That(false);
             }
         }
+        #endregion
+
+        #region Open Generics
+
+        [Test]
+        public void Getting_Concrete_Generic_Should_Not_Throw()
+        {
+            container.RegisterSingleton(typeof(IGenericInterface<>), typeof(GenericClassWithInterface<>));
+            container.RegisterSingleton<BasicClass>();
+            var service = container.GetService<IGenericInterface<BasicClass>>();
+            Assert.IsNotNull(service);
+            Assert.IsAssignableFrom<GenericClassWithInterface<BasicClass>>(service);
+        }
+
+        [Test]
+        public void Getting_Concrete_Generic_Singleton_From_Scope_Should_Resolve_Same_Object_In_Root()
+        {
+            container.RegisterSingleton(typeof(IGenericInterface<>), typeof(GenericClassWithInterface<>));
+            container.RegisterSingleton<BasicClass>();
+
+            var scopeProvider = container.GetService<IScopeProvider>();
+            
+            var scopeOne = scopeProvider.CreateScope();
+            var serviceOne = scopeOne.GetService<IGenericInterface<BasicClass>>();
+
+            var serviceTwo = container.GetService<IGenericInterface<BasicClass>>();
+
+            Assert.AreEqual(serviceOne, serviceTwo);
+        }
+
         #endregion
     }
 }

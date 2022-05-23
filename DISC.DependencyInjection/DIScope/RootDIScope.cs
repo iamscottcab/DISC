@@ -138,6 +138,51 @@ namespace DISC
 
         #endregion
 
+        #region Scoped
+
+        public void RegisterScoped(Type serviceType)
+        {
+            RegisterScoped(serviceType, serviceType, null);
+        }
+
+        public void RegisterScoped(Type serviceType, Func<object> factory)
+        {
+            RegisterScoped(serviceType, serviceType, factory);
+        }
+
+        public void RegisterScoped(Type serviceType, Type implementationType)
+        {
+            RegisterScoped(serviceType, implementationType, null);
+        }
+
+        public void RegisterScoped(Type serviceType, Type implementationType, Func<object> factory)
+        {
+            ValidateTypes(serviceType, implementationType);
+            AddToServices(serviceType, implementationType, factory, ServiceLifetime.Scoped);
+        }
+
+        public void RegisterScoped<TService>() where TService : class
+        {
+            RegisterScoped<TService, TService>(null);
+        }
+
+        public void RegisterScoped<TService>(Func<TService> factory) where TService : class
+        {
+            RegisterScoped<TService, TService>(factory);
+        }
+
+        public void RegisterScoped<TService, TImplementation>() where TImplementation : class, TService
+        {
+            RegisterScoped<TService, TImplementation>(null);
+        }
+
+        public void RegisterScoped<TService, TImplementation>(Func<TImplementation> factory) where TImplementation : class, TService
+        {
+            AddToServices(typeof(TService), typeof(TImplementation), factory, ServiceLifetime.Scoped);
+        }
+
+        #endregion
+
         public IDIScope CreateScope()
         {
             var servicesCopy = services.Select(entry =>
