@@ -48,7 +48,6 @@ namespace DISC
                 throw new NullReferenceException($"A service of type {serviceType.Name} was not registered.");
             }
 
-            // If we have a Singleton make sure we always get it from the root scope to prevent accidentally loading the Singleton twice
             if (descriptor.Lifetime == ServiceLifetime.Singleton && RootScope != this)
             {
                 return RootScope.GetService(serviceType);
@@ -61,6 +60,11 @@ namespace DISC
                 if (descriptor.ImplementationFactory != null)
                 {
                     implementation = descriptor.ImplementationFactory();
+
+                    if (!serviceType.IsAssignableFrom(implementation.GetType()))
+                    {
+                        throw new InvalidCastException($"Type {serviceType} is not assignable from {implementation.GetType().Name}");
+                    }
                 }
                 else
                 {

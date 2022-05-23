@@ -50,6 +50,27 @@ namespace DISC
 
         #region Singletons
 
+        public void RegisterSingleton(Type serviceType)
+        {
+            RegisterSingleton(serviceType, serviceType, null);
+        }
+
+        public void RegisterSingleton(Type serviceType, Func<object> factory)
+        {
+            RegisterSingleton(serviceType, serviceType, factory);
+        }
+
+        public void RegisterSingleton(Type serviceType, Type implementationType)
+        {
+            RegisterSingleton(serviceType, implementationType, null);
+        }
+
+        public void RegisterSingleton(Type serviceType, Type implementationType, Func<object> factory)
+        {
+            ValidateTypes(serviceType, implementationType);
+            AddToServices(serviceType, implementationType, factory, ServiceLifetime.Singleton);
+        }
+
         public void RegisterSingleton<TService>() where TService : class
         {
             RegisterSingleton<TService, TService>(null);
@@ -73,6 +94,27 @@ namespace DISC
         #endregion
 
         #region Transients
+
+        public void RegisterTransient(Type serviceType)
+        {
+            RegisterTransient(serviceType, serviceType, null);
+        }
+
+        public void RegisterTransient(Type serviceType, Func<object> factory)
+        {
+            RegisterTransient(serviceType, serviceType, factory);
+        }
+
+        public void RegisterTransient(Type serviceType, Type implementationType)
+        {
+            RegisterTransient(serviceType, implementationType, null);
+        }
+
+        public void RegisterTransient(Type serviceType, Type implementationType, Func<object> factory)
+        {
+            ValidateTypes(serviceType, implementationType);
+            AddToServices(serviceType, implementationType, factory, ServiceLifetime.Transient);
+        }
 
         public void RegisterTransient<TService>() where TService : class
         {
@@ -111,6 +153,27 @@ namespace DISC
             }).ToDictionary(s => s.Key, s => s.Value);
 
             return new DIScope(servicesCopy);
+        }
+
+        private void ValidateTypes(Type serviceType, Type implementationType)
+        {
+            if (serviceType == null || implementationType == null)
+            {
+                throw new ArgumentNullException("Unable to pass null types to Register.");
+            }
+
+            if (!implementationType.IsClass)
+            {
+                throw new ArgumentException($"Type {implementationType.Name} must be both a class and not abstract.");
+            }
+
+            var assignableFrom = serviceType.IsAssignableFrom(implementationType);
+            var assignableToGeneric = implementationType.IsAssignableToOpenGenericType(serviceType);
+
+            if (!assignableFrom && !assignableToGeneric)
+            {
+                throw new InvalidCastException($"Type {implementationType.Name} must be assignable to {serviceType.Name}.");
+            }
         }
     }
 }

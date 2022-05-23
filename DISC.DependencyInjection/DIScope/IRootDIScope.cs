@@ -27,6 +27,39 @@ namespace DISC
         /// <summary>
         /// Registers a service with a Singleton lifetime.
         /// </summary>
+        /// <exception cref="ArgumentNullException">If any required params are null.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract or not a class.</exception>
+        void RegisterSingleton(Type serviceType);
+
+        /// <summary>
+        /// Registers a service with a Singleton lifetime.
+        /// </summary>
+        /// Registers a service with a Singleton lifetime.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">If any required params are null.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract or not a class.</exception>
+        /// <exception cref="InvalidCastException">Thrown if the implementation is not assignable to the service type.</exception>
+        void RegisterSingleton(Type serviceType, Func<object> factory);
+
+        /// <summary>
+        /// Registers a service with a Singleton lifetime.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">If any required params are null.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract or not a class.</exception>
+        /// <exception cref="InvalidCastException">Thrown if the implementation is not assignable to the service type.</exception> 
+        void RegisterSingleton(Type serviceType, Type implementationType);
+
+        /// <summary>
+        /// Registers a service with a Singleton lifetime.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">If any required params are null.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract or not a class.</exception>
+        /// <exception cref="InvalidCastException">Thrown if the implementation is not assignable to the service type.</exception>
+        void RegisterSingleton(Type serviceType, Type implementationType, Func<object> factory);
+
+        /// <summary>
+        /// Registers a service with a Singleton lifetime.
+        /// </summary>
         /// <exception cref="ArgumentException">Thrown if the implementation is abstract.</exception>
         void RegisterSingleton<TService>() where TService : class;
 
@@ -51,6 +84,37 @@ namespace DISC
         #endregion
 
         #region Transients
+
+        /// <summary>
+        /// Registers a service with a Transient lifetime.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">If any required params are null.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract or not a class.</exception>
+        void RegisterTransient(Type serviceType);
+
+        /// <summary>
+        /// Registers a service with a Transient lifetime.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">If any required params are null.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract or not a class.</exception>
+        /// <exception cref="InvalidCastException">Thrown if the implementation is not assignable to the service type.</exception>
+        void RegisterTransient(Type serviceType, Func<object> factory);
+
+        /// <summary>
+        /// Registers a service with a Transient lifetime.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">If any required params are null.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract or not a class.</exception>
+        /// <exception cref="InvalidCastException">Thrown if the implementation is not assignable to the service type.</exception>
+        void RegisterTransient(Type serviceType, Type implementationType);
+
+        /// <summary>
+        /// Registers a service with a Transient lifetime.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">If any required params are null.</exception>
+        /// <exception cref="ArgumentException">Thrown if the implementation is abstract or not a class.</exception>
+        /// <exception cref="InvalidCastException">Thrown if the implementation is not assignable to the service type.</exception>
+        void RegisterTransient(Type serviceType, Type implementationType, Func<object> factory);
 
         /// <summary>
         /// Registers a service with a Transient lifetime.

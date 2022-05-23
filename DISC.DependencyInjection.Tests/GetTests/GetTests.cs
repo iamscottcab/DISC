@@ -330,5 +330,78 @@ namespace DISC.Tests
         }
 
         #endregion
+
+        #region Getting via Types
+
+        [Test]
+        public void Getting_Class_By_Type_Should_Not_Throw()
+        {
+            container.RegisterSingleton(typeof(BasicClass));
+            container.GetService(typeof(BasicClass));
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Getting_Instance_By_Type_Should_Not_Throw()
+        {
+            container.RegisterSingleton(typeof(ISomeInterface), typeof(SomeClassWithInterface));
+            container.GetService(typeof(ISomeInterface));
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Getting_Class_By_Type_With_Factory_Should_Not_Throw()
+        {
+            container.RegisterSingleton(typeof(BasicClass), () => new BasicClass());
+            container.GetService(typeof(BasicClass));
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Getting_Instance_By_Type_With_Factory_Should_Not_Throw()
+        {
+            container.RegisterSingleton(typeof(ISomeInterface), typeof(SomeClassWithInterface), () => new SomeDerivedClassWithInterface());
+            container.GetService(typeof(ISomeInterface));
+            Assert.That(true);
+        }
+
+        [Test]
+        public void Getting_Class_By_Type_With_Invalid_Factory_Should_Throw()
+        {
+            container.RegisterSingleton(typeof(BasicClass), () => new SomeOtherBasicClass());
+            try
+            {
+                container.GetService(typeof(BasicClass));
+                Assert.That(false);
+            }
+            catch (InvalidCastException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
+        [Test]
+        public void Getting_Instance_By_Type_With_Invalid_Factory_Should_Throw()
+        {
+            container.RegisterSingleton(typeof(ISomeInterface), typeof(SomeClassWithInterface), () => new BasicClass());
+            try
+            {
+                container.GetService(typeof(ISomeInterface));
+                Assert.That(false);
+            }
+            catch (InvalidCastException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+        #endregion
     }
 }

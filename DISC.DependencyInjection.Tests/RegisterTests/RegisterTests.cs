@@ -199,5 +199,147 @@ namespace DISC.Tests.RegisterTests
         }
 
         #endregion
+
+        #region Registering via Types
+
+        [Test]
+        public void Registering_Open_Generics_Should_Not_Throw()
+        {
+            container.RegisterSingleton(typeof(IGenericInterface<>), typeof(GenericClassWithInterface<>));
+        }
+
+        [Test]
+        public void Registering_Class_By_Type_Should_Not_Throw()
+        {
+            container.RegisterSingleton(typeof(BasicClass));
+        }
+
+        [Test]
+        public void Registering_Class_By_Type_With_Factory_Should_Not_Throw()
+        {
+            container.RegisterSingleton(typeof(BasicClass), () => new BasicClass());
+        }
+
+        [Test]
+        public void Registering_Interface_By_Type_Should_Not_Throw()
+        {
+            container.RegisterSingleton(typeof(ISomeInterface), typeof(SomeClassWithInterface));
+        }
+
+        [Test]
+        public void Registering_Interface_By_Type_With_Factory_Should_Not_Throw()
+        {
+            container.RegisterSingleton(typeof(ISomeInterface), typeof(SomeClassWithInterface), () => new SomeClassWithInterface());
+        }
+
+        [Test]
+        public void Registering_Class_With_No_Type_Should_Throw()
+        {
+            try
+            {
+                container.RegisterSingleton(null);
+                Assert.That(false);
+            }
+            catch (ArgumentNullException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
+        [Test]
+        public void Registering_Interface_With_No_Type_Should_Throw()
+        {
+            try
+            {
+                container.RegisterSingleton(null, typeof(BasicClass));
+                Assert.That(false);
+            }
+            catch (ArgumentNullException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
+        [Test]
+        public void Registering_With_No_Types_Should_Throw()
+        {
+            try
+            {
+                container.RegisterSingleton(null, null, null);
+                Assert.That(false);
+            }
+            catch (ArgumentNullException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
+        [Test]
+        public void Registering_Static_Class_By_Type_Should_Throw()
+        {
+            try
+            {
+                container.RegisterSingleton(typeof(BasicStaticClass));
+                Assert.That(false);
+            }
+            catch (ArgumentException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
+        [Test]
+        public void Registering_Abstract_Class_By_Type_Should_Throw()
+        {
+            try
+            {
+                container.RegisterSingleton(typeof(BasicAbstractClass));
+                Assert.That(false);
+            }
+            catch (ArgumentException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
+        [Test]
+        public void Registering_Interface_By_Type_Should_Throw()
+        {
+            try
+            {
+                container.RegisterSingleton(typeof(ISomeInterface));
+                Assert.That(false);
+            }
+            catch (ArgumentException)
+            {
+                Assert.That(true);
+            }
+            catch (Exception)
+            {
+                Assert.That(false);
+            }
+        }
+
+        #endregion
     }
 }
