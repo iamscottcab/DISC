@@ -25,7 +25,7 @@ You may want to use the DISC container in the following circumstances:
 - You are me, and you wrote it, and you think it's cool... 🤷‍♀️
 
 ## ⚙️ Installation
-Get the latest release from the [Releases Page](https://github.com/iamscottcab/disc/releases), or clone and compile from source. If you'd like a NuGet Package please open up an issue on the repo and I'll see if I can make it happen.
+Get the latest release from the [Releases Page](https://github.com/iamscottcab/DISC/releases), or clone and compile from source. If you'd like a NuGet Package please open up an issue on the repo and I'll see if I can make it happen.
 
 ## ⚡️ Quick Start
 
