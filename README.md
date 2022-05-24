@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img alt="DISC Logo" src="https://raw.githubusercontent.com/iamscottcab/disc/main/.github/images/logo.png" width="250px"/><br/>
+  <img alt="DISC Logo" src="https://raw.githubusercontent.com/iamscottcab/DISC/main/.github/images/logo.png" width="250px"/><br/>
   Dependency Injection <i>(by)</i> Scott Cab
 </h1>
 <p align="center"><b>DISC</b> is a zero dependency runtime IoC / DI container written in C# for .NET 5.0.</p>
@@ -104,5 +104,5 @@ You can pass an optional `DISettings` object to `DI.CreateRootScope()` to turn o
 
 ## 💖 Thanks
 If you've gotten this far, or you've enjoyed this tool and want to say thanks you can do that in the following ways:
-- Add a [GitHub Star](https://github.com/iamscottcab/disc) to the project.
+- Add a [GitHub Star](https://github.com/iamscottcab/DISC) to the project.
 - Say hi on [Twitter](https://twitter.com/iamscottcab).
