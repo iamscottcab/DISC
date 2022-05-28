@@ -9,14 +9,14 @@ namespace DISC
     {
         internal static RootDIScope RootScope { get; set; }
 
-        protected Dictionary<Type, ServiceDescriptor> services = new();
+        protected List<ServiceDescriptor> services = new();
 
         public DIScope()
         {
             CheckInitialization();
         }
 
-        public DIScope(Dictionary<Type, ServiceDescriptor> services) : this ()
+        public DIScope(List<ServiceDescriptor> services) : this ()
         {
             this.services = services;
         }
@@ -104,19 +104,19 @@ namespace DISC
 
         private ServiceDescriptor GetServiceDescriptor(Type serviceType)
         {
-            services.TryGetValue(serviceType, out var descriptor);
+            var descriptor = services.Where(d => d.ServiceType == serviceType).LastOrDefault();
 
             if (descriptor != null || !serviceType.IsGenericType)
             {
                 return descriptor;
             }
 
-            services.TryGetValue(serviceType.GetGenericTypeDefinition(), out var genericDescriptor);
+            var genericDescriptor = services.Where(d => d.ServiceType == serviceType.GetGenericTypeDefinition()).LastOrDefault();
 
             if (genericDescriptor != null)
             {
                 TryUpdateOpenGenericServiceDescriptor(genericDescriptor, serviceType);
-                services.TryGetValue(serviceType, out descriptor);
+                descriptor = services.Where(d => d.ServiceType == serviceType).LastOrDefault();
             }
 
             return descriptor;
@@ -178,7 +178,7 @@ namespace DISC
                 throw new ArgumentException($"A service of type {implementationType.Name} cannot be instantiated as it is abstract.");
             }
 
-            services[serviceType] = new ServiceDescriptor(implementationType, implementationFactory, lifetime);
+            services.Add(new ServiceDescriptor(serviceType, implementationType, implementationFactory, lifetime));
         }
     }
 }

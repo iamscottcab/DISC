@@ -191,17 +191,11 @@ namespace DISC
 
         public IDIScope CreateScope()
         {
-            var servicesCopy = services.Select(entry =>
-            {
-                var rootDescriptor = entry.Value;
-
-                var serviceDescriptor = new ServiceDescriptor(
-                    rootDescriptor.ImplementationType,
-                    rootDescriptor.ImplementationFactory,
-                    rootDescriptor.Lifetime);
-
-                return new KeyValuePair<Type, ServiceDescriptor>(entry.Key, serviceDescriptor);
-            }).ToDictionary(s => s.Key, s => s.Value);
+            var servicesCopy = services.Select(entry => 
+                new ServiceDescriptor(entry.ServiceType,
+                    entry.ImplementationType,
+                    entry.ImplementationFactory,
+                    entry.Lifetime)).ToList();
 
             return new DIScope(servicesCopy);
         }
