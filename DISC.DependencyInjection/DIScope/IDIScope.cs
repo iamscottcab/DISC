@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DISC
 {
     public interface IDIScope
     {
         /// <summary>
-        /// Resolves the requested service by Type.
+        /// Resolves the last instance of the requested service by Type.
         /// Useful for dynamic runtime service resolution where generics are not available.
         /// </summary>
         /// <returns><see cref="object"/>Returns an object matching the type requested which can be hard cast to the relevant service.</returns>
@@ -16,12 +17,21 @@ namespace DISC
         object GetService(Type serviceType);
 
         /// <summary>
-        /// Resolves the requested service.
+        /// Resolves the last instance of the requested service.
         /// </summary>
         /// <returns>The type of TService provided to the generic</returns>
         /// <exception cref="NullReferenceException">Thrown if the requested service cannot be found.</exception>
         /// <exception cref="InvalidOperationException">Thrown if the requested service does not have exactly 0 or 1 constructors.</exception>
         /// <exception cref="NotSupportedException">Thrown if service lifetime validation fails.</exception>
         TService GetService<TService>();
+
+        /// <summary>
+        /// Resolves an IEnumerable of all implementations of the requested service.
+        /// </summary>
+        /// <returns>An IEnumerable of the type of TService provided to the generic</returns>
+        /// <exception cref="NullReferenceException">Thrown if the requested service cannot be found.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the requested service does not have exactly 0 or 1 constructors.</exception>
+        /// <exception cref="NotSupportedException">Thrown if service lifetime validation fails.</exception>
+        IEnumerable<TService> GetServices<TService>();
     }
 }

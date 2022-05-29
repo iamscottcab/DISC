@@ -10,8 +10,9 @@ Dependency Injection *(by)* Scott Cab **DISC** is a lightweight DI / IoC contain
 - Multiple service lifetimes including Singleton, Scoped and Transient.
 - Common registration patterns via Generic, Type and factory declarations.
 - Support for open generics, similar to ILogger in other frameworks.
+- Support for returning an IEnumerable of all implementations of a type, either via injection or service location.
 - Lifetime validation to try and identify captured dependencies.
-- Manual scope creation & service resolution.
+- Manual scope creation & service location.
 
 ## Why Use DISC?
 You may want to use the DISC container in the following circumstances:

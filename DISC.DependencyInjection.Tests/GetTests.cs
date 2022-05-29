@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DISC.Tests
 {
@@ -647,6 +649,59 @@ namespace DISC.Tests
             container.RegisterSingleton<IInterfaceWithDependency, ClassWithDependency>();
             container.GetService<BasicClass>();
             Assert.That(true);
+        }
+
+        #endregion
+
+        #region IEnumerables
+
+        [Test]
+        public void Getting_IEnumerable_Of_Class_Should_Not_Throw()
+        {
+            container.RegisterSingleton<BasicClass>();
+            container.RegisterSingleton<BasicClass>(() => new DerivedClass());
+            container.RegisterSingleton<ClassWithIEnumerableDependency<BasicClass>>();
+
+            var result = container.GetService<ClassWithIEnumerableDependency<BasicClass>>();
+
+            var collection = result.Classes.ToList();
+
+            Assert.That(collection.Count == 2);
+            Assert.That(collection[0].GetType() == typeof(BasicClass));
+            Assert.That(collection[1].GetType() == typeof(DerivedClass));
+        }
+
+        [Test]
+        public void Getting_IEnumerable_Of_Interface_Should_Not_Throw()
+        {
+            container.RegisterSingleton<ISomeInterface, SomeClassWithInterface>();
+            container.RegisterSingleton<ISomeInterface, SomeOtherClassWithInterface>();
+            container.RegisterSingleton<ClassWithIEnumerableDependency<ISomeInterface>>();
+
+            var result = container.GetService<ClassWithIEnumerableDependency<ISomeInterface>>();
+
+            var collection = result.Classes.ToList();
+
+            Assert.That(collection.Count == 2);
+            Assert.That(collection[0].GetType() == typeof(SomeClassWithInterface));
+            Assert.That(collection[1].GetType() == typeof(SomeOtherClassWithInterface));
+        }
+
+        [Test]
+        public void Getting_Services_From_Scope_Should_Return_Collection()
+        {
+            container.RegisterSingleton<ISomeInterface, SomeClassWithInterface>();
+            container.RegisterSingleton<ISomeInterface, SomeOtherClassWithInterface>();
+
+            var result = container.GetServices<ISomeInterface>();
+
+            Assert.That(result is IEnumerable<ISomeInterface>);
+
+            var resultAsList = result.ToList();
+
+            Assert.That(resultAsList.Count == 2);
+            Assert.That(resultAsList[0].GetType() == typeof(SomeClassWithInterface));
+            Assert.That(resultAsList[1].GetType() == typeof(SomeOtherClassWithInterface));
         }
 
         #endregion

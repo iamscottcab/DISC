@@ -1,4 +1,6 @@
-﻿namespace DISC.Tests
+﻿using System.Collections.Generic;
+
+namespace DISC.Tests
 {
     public class BasicClass { }
     public class DerivedClass : BasicClass { }
@@ -58,6 +60,16 @@
         public ClassWithDependency(BasicClass basicClass)
         {
             Class = basicClass;
+        }
+    }
+
+    public class ClassWithIEnumerableDependency<T>
+    {
+        public IEnumerable<T> Classes;
+
+        public ClassWithIEnumerableDependency(IEnumerable<T> classes)
+        {
+            Classes = classes;
         }
     }
 }
